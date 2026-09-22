@@ -2,9 +2,9 @@
 
 ## Overview
 
-Teiwah is a programmable WhatsApp platform. It lets an application, n8n workflow, or AI agent send and receive WhatsApp messages through an HTTP API and webhooks without implementing the WhatsApp protocol. A customer signs in to the dashboard, creates a **session** for one WhatsApp account, scans a QR code, and receives an API key for that session.
+Teiwah is a programmable WhatsApp platform: it lets customer applications and automation tools (n8n, custom backends, and AI agents) send and receive WhatsApp messages over a simple HTTP API and webhooks without touching the WhatsApp protocol themselves. A customer signs in to the dashboard, creates a **session** for one connected WhatsApp number, scans a QR code, and immediately gets an API key for sending messages and a webhook for receiving them. Teiwah handles the difficult parts of running WhatsApp at scale: maintaining a live client per number, surviving restarts, isolating tenants, and authenticating callers.
 
-The system separates account management from message delivery. A control service creates and manages sessions, while every connected WhatsApp account runs in its own worker. This document describes the final implemented architecture by following a session from creation through pairing and message delivery.
+The system is built from four cooperating pieces: a **dashboard** where customers manage sessions, an **API gateway** that is the single authenticated front door, a **control backend** that is the system of record and orchestrator, and a fleet of **session workers** that each own one live WhatsApp connection. This document explains how those pieces fit together and why each technology was chosen, moving from high-level principles to the concrete flows connecting the services. Implementation details live in the component repositories; this document focuses on the boundaries between them.
 
 > **Status:** Archived. Teiwah is no longer maintained or operated. The repositories and historical deployment details are preserved as a technical record of the project.
 
